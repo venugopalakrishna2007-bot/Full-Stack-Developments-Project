@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>KisanSeva Portal | Farmer-Friendly Agriculture Web-App</title>
+  <meta name="description" content="Offline-first digital farm management portal for small-scale farmers, farm laborers, and agriculture students. Developed under academic mentorship of Dr. K. Dinesh.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top App Shell Banner -->
+  <div class="top-banner">
+    <div class="banner-inner">
+      <span class="offline-pill" title="Works completely offline without active internet">
+        <span class="pulse-dot"></span> Offline Ready (Local Storage)
+      </span>
+      <span class="academic-tag">
+        🎓 Project: B.Tech Agriculture Digital Support | Mentor: <strong>Dr. K. Dinesh</strong>
+      </span>
+      <button type="button" id="btn-show-credits" class="text-link-btn" aria-label="View Project Credits">
+        ℹ️ Project Info
+      </button>
+    </div>
+  </div>
+
+  <!-- Primary Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-block">
+        <div class="brand-logo" aria-hidden="true">🌾</div>
+        <div>
+          <h1 class="brand-title">KisanSeva Portal</h1>
+          <p class="brand-tagline">Digital Farm Assistant &amp; Field Ledger</p>
+        </div>
+      </div>
+
+      <div class="header-user-badge" id="header-user-badge" role="region" aria-label="User Profile Summary">
+        <div class="badge-avatar" id="badge-avatar">👨‍🌾</div>
+        <div class="badge-details">
+          <span class="badge-name" id="badge-name">Guest Farmer</span>
+          <span class="badge-sub" id="badge-location">Profile Not Configured</span>
+        </div>
+        <button type="button" class="badge-quick-btn" id="btn-quick-profile" title="Configure Profile">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Horizontal Tab Navigation Bar -->
+  <nav class="app-nav" aria-label="Main Navigation">
+    <div class="nav-container">
+      <button type="button" class="nav-tab active" data-target="view-dashboard" id="tab-dashboard" role="tab" aria-selected="true" aria-controls="view-dashboard">
+        <span class="nav-icon" aria-hidden="true">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-profile" id="tab-profile" role="tab" aria-selected="false" aria-controls="view-profile">
+        <span class="nav-icon" aria-hidden="true">👤</span>
+        <span class="nav-label">Farmer Profile</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-farm" id="tab-farm" role="tab" aria-selected="false" aria-controls="view-farm">
+        <span class="nav-icon" aria-hidden="true">🚜</span>
+        <span class="nav-label">Farm Details</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-crops" id="tab-crops" role="tab" aria-selected="false" aria-controls="view-crops">
+        <span class="nav-icon" aria-hidden="true">🌱</span>
+        <span class="nav-label">Crop Catalog</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-ledger" id="tab-ledger" role="tab" aria-selected="false" aria-controls="view-ledger">
+        <span class="nav-icon" aria-hidden="true">📒</span>
+        <span class="nav-label">Field Ledger</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-advisory" id="tab-advisory" role="tab" aria-selected="false" aria-controls="view-advisory">
+        <span class="nav-icon" aria-hidden="true">🏛️</span>
+        <span class="nav-label">Agri Info &amp; Schemes</span>
+      </button>
+      <button type="button" class="nav-tab" data-target="view-diagrams" id="tab-diagrams" role="tab" aria-selected="false" aria-controls="view-diagrams">
+        <span class="nav-icon" aria-hidden="true">📐</span>
+        <span class="nav-label">Design &amp; Architecture Diagrams</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Application Body Container -->
+  <main class="main-content" id="main-content">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ========================================================
+         VIEW 1: CENTRAL FARMER DASHBOARD
+         ======================================================== -->
+    <section id="view-dashboard" class="app-view active" role="tabpanel" aria-labelledby="tab-dashboard">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">🌾 Central Farm Dashboard</h2>
+          <p class="view-subtitle">Consolidated operational metrics, soil health status, and live field ledger balance.</p>
+        </div>
+        <div class="view-actions">
+          <button type="button" id="btn-export-json" class="btn btn-outline" title="Export all portal data to a JSON file">
+            📥 Backup Data (JSON)
+          </button>
+          <label class="btn btn-outline file-input-label" title="Restore portal data from a previous JSON backup">
+            📤 Restore Backup
+            <input type="file" id="input-import-json" accept=".json" class="visually-hidden">
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Welcome Callout -->
+      <div class="welcome-card" id="dashboard-welcome-banner">
+        <div class="welcome-icon">🌱</div>
+        <div class="welcome-text">
+          <h3 id="dash-greeting-title">Welcome to KisanSeva!</h3>
+          <p id="dash-greeting-text">Your local digital assistant for precision record-keeping and crop advisory. Start by configuring your farmer profile or registering field activities.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" id="btn-dash-action">Update Profile</button>
+      </div>
+
+      <!-- KPI Summary Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-green">
+          <div class="kpi-icon" aria-hidden="true">📐</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Total Land Area</span>
+            <span class="kpi-value" id="kpi-acres">0.0 <small>Acres</small></span>
+            <span class="kpi-sub" id="kpi-survey">Passbook: Not Set</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-emerald">
+          <div class="kpi-icon" aria-hidden="true">🌾</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Primary Standing Crop</span>
+            <span class="kpi-value" id="kpi-crop">None</span>
+            <span class="kpi-sub" id="kpi-method">Method: Not Set</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-icon" aria-hidden="true">📋</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Field Operations Logged</span>
+            <span class="kpi-value" id="kpi-activity-count">0</span>
+            <span class="kpi-sub" id="kpi-activity-sub">Lifetime field records</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-icon" aria-hidden="true">💰</div>
+          <div class="kpi-data">
+            <span class="kpi-label">Total Incurred Expenses</span>
+            <span class="kpi-value" id="kpi-total-expense">₹0.00</span>
+            <span class="kpi-sub">Calculated via Field Ledger</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Farm Health & Recent Operations -->
+      <div class="dashboard-columns">
+        
+        <!-- Farm Soil & Water Overview -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🚜 Farm Profile &amp; Natural Resources</h3>
+            <button type="button" class="btn btn-xs btn-outline" id="btn-edit-farm-shortcut">Edit Details</button>
+          </div>
+          <div class="card-body">
+            <ul class="detail-list">
+              <li>
+                <span class="detail-label">🌍 Soil Classification:</span>
+                <span class="detail-value font-bold" id="dash-soil-type">Not Configured</span>
+              </li>
+              <li>
+                <span class="detail-label">💧 Primary Water Source:</span>
+                <span class="detail-value font-bold" id="dash-water-source">Not Configured</span>
+              </li>
+              <li>
+                <span class="detail-label">🌱 Sown Crop Portfolio:</span>
+                <span class="detail-value" id="dash-active-crops">None recorded</span>
+              </li>
+              <li>
+                <span class="detail-label">📍 Geographic Location:</span>
+                <span class="detail-value" id="dash-location-text">Not Set</span>
+              </li>
+              <li>
+                <span class="detail-label">🌿 Agronomic Methodology:</span>
+                <span class="detail-value" id="dash-methodology-text">Not Set</span>
+              </li>
+            </ul>
+
+            <div class="advisory-pill-box" id="dash-soil-advice">
+              <span class="pill-icon">💡</span>
+              <p class="pill-text">Complete your Farm Details to unlock tailored soil management and nutrient recommendations.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent 3 Field Operations -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🕒 Recent Field Operations</h3>
+            <button type="button" class="btn btn-xs btn-outline" id="btn-view-all-ledger">Open Ledger</button>
+          </div>
+          <div class="card-body">
+            <div id="dash-recent-activities-list" class="recent-activities-list">
+              <!-- Dynamically populated or empty state -->
+              <div class="empty-state-mini">
+                <span class="empty-icon">📝</span>
+                <p>No field activities logged yet. Track your sowing, fertilizer, or harvest expenses in the Field Ledger.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Architecture & Design Blueprint Showcase Card -->
+      <div class="card blueprint-showcase-card">
+        <div class="card-header">
+          <div class="showcase-header-left">
+            <span class="badge-status-blue">📐 Academic Design Thinking</span>
+            <h3 class="card-title">System Architecture, Prototype &amp; Customer Journey Maps</h3>
+          </div>
+          <button type="button" class="btn btn-sm btn-primary" id="btn-view-all-diagrams">
+            📐 Explore Full Diagrams
+          </button>
+        </div>
+        <div class="card-body">
+          <p class="showcase-desc">
+            Visual engineering specifications and empathy maps developed under Faculty Mentor <strong>Dr. K. Dinesh</strong> by <strong>G. Hari Charan (2500040163)</strong> &amp; <strong>H. Venu Gopal Krishna (2500040237)</strong>:
+          </p>
+          <div class="blueprint-thumb-grid">
+            <div class="blueprint-thumb-item" onclick="kisanOpenDiagram('assets/prototype_design_diagram.jpg', 'Prototype Design Diagram (Farmer-Friendly Agriculture Web App)')">
+              <div class="thumb-img-wrap">
+                <img src="assets/prototype_design_diagram.jpg" alt="Prototype Design Diagram Preview" loading="lazy">
+                <span class="thumb-badge">1. Prototype Flow</span>
+              </div>
+              <span class="thumb-title">Prototype Design Diagram</span>
+            </div>
+            <div class="blueprint-thumb-item" onclick="kisanOpenDiagram('assets/customer_journey_diagram.jpg', 'Customer Journey Diagram - From Registration to Better Farming')">
+              <div class="thumb-img-wrap">
+                <img src="assets/customer_journey_diagram.jpg" alt="Customer Journey Diagram Preview" loading="lazy">
+                <span class="thumb-badge">2. Farmer Journey</span>
+              </div>
+              <span class="thumb-title">Customer Journey Diagram</span>
+            </div>
+            <div class="blueprint-thumb-item" onclick="kisanOpenDiagram('assets/project_mindmap_diagram.jpg', 'Farmer-Friendly Agriculture Web App Mindmap')">
+              <div class="thumb-img-wrap">
+                <img src="assets/project_mindmap_diagram.jpg" alt="Project Mindmap Diagram Preview" loading="lazy">
+                <span class="thumb-badge">3. Architecture Mindmap</span>
+              </div>
+              <span class="thumb-title">Project Mindmap &amp; Specs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Emergency Hotline Strip -->
+      <div class="helpline-strip">
+        <div class="helpline-item">
+          <span class="helpline-icon">📞</span>
+          <div>
+            <strong>Kisan Call Centre (Toll-Free):</strong> 
+            <a href="tel:18001801551" class="helpline-link">1800-180-1551</a> (6:00 AM - 10:00 PM)
+          </div>
+        </div>
+        <div class="helpline-item">
+          <span class="helpline-icon">🛡️</span>
+          <div>
+            <strong>Crop Insurance Portal (PMFBY):</strong> 
+            <a href="https://pmfby.gov.in" target="_blank" rel="noopener noreferrer" class="helpline-link">pmfby.gov.in</a>
+          </div>
+        </div>
+        <div class="helpline-item demo-data-wrap">
+          <button type="button" id="btn-load-demo-data" class="btn btn-xs btn-secondary" title="Populate realistic dummy data for assessment &amp; testing">
+            ⚡ Load Sample Farmer Data
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 2: FARMER REGISTRATION & PROFILE
+         ======================================================== -->
+    <section id="view-profile" class="app-view" role="tabpanel" aria-labelledby="tab-profile">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">👤 Farmer Registration &amp; Identity</h2>
+          <p class="view-subtitle">Store personal details and preferred communication language locally on this device.</p>
+        </div>
+      </div>
+
+      <div class="form-layout-grid">
+        <!-- Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">📝 Farmer Personal Profile</h3>
+            <span class="badge-status">Encrypted in LocalStorage</span>
+          </div>
+          <div class="card-body">
+            <form id="form-profile" novalidate>
+              <div class="form-group">
+                <label for="prof-name" class="form-label required">Full Name of Farmer / Landholder</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">👤</span>
+                  <input type="text" id="prof-name" name="name" class="form-control" placeholder="e.g., Ramesh Patel" required minlength="2" maxlength="60">
+                </div>
+                <div class="field-error" id="err-prof-name">Please enter farmer's full name (min 2 characters).</div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="prof-phone" class="form-label required">10-Digit Mobile Number</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">📱</span>
+                    <input type="tel" id="prof-phone" name="phone" class="form-control" placeholder="e.g., 9876543210" pattern="^[6-9]\d{9}$" required maxlength="10">
+                  </div>
+                  <span class="form-hint">Indian format: 10 digits starting with 6, 7, 8, or 9.</span>
+                  <div class="field-error" id="err-prof-phone">Enter a valid 10-digit mobile number starting with 6-9.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-lang" class="form-label required">Preferred Communication Language</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🗣️</span>
+                    <select id="prof-lang" name="language" class="form-control" required>
+                      <option value="English">English</option>
+                      <option value="Telugu">Telugu (తెలుగు)</option>
+                      <option value="Hindi">Hindi (हिन्दी)</option>
+                      <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                      <option value="Tamil">Tamil (தமிழ்)</option>
+                      <option value="Marathi">Marathi (मराठी)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="prof-district" class="form-label required">District / Revenue Division</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🏛️</span>
+                    <input type="text" id="prof-district" name="district" class="form-control" placeholder="e.g., Anantapur, Warangal, Kurnool" required>
+                  </div>
+                  <div class="field-error" id="err-prof-district">Please enter the district name.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="prof-village" class="form-label required">Village / Gram Panchayat</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🏡</span>
+                    <input type="text" id="prof-village" name="village" class="form-control" placeholder="e.g., Dharmavaram" required>
+                  </div>
+                  <div class="field-error" id="err-prof-village">Please enter the village name.</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="prof-methodology" class="form-label required">Primary Farming Methodology</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">🌿</span>
+                  <select id="prof-methodology" name="methodology" class="form-control" required>
+                    <option value="Conventional Farming">Conventional Farming (Inorganic / Modern Integrated)</option>
+                    <option value="Certified Organic">Certified Organic Farming (Paramparagat Krishi)</option>
+                    <option value="Natural Farming (ZBNF)">Natural Farming (Subhash Palekar ZBNF / Cow-based)</option>
+                    <option value="Mixed Crop-Livestock">Mixed Integrated Crop-Livestock System</option>
+                    <option value="Precision & Horticulture">Precision Nursery / Protected Horticulture</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-save-profile">
+                  💾 Save &amp; Update Profile
+                </button>
+                <button type="button" class="btn btn-outline" id="btn-reset-profile">
+                  🔄 Clear Profile Form
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Profile Preview / Identity Card -->
+        <div class="card id-card-container">
+          <div class="card-header">
+            <h3 class="card-title">🪪 Digital Farmer Pass</h3>
+            <span class="badge-status-green">Verified Local Record</span>
+          </div>
+          <div class="card-body">
+            <div class="farmer-id-card">
+              <div class="id-card-top">
+                <div class="id-logo">🌾</div>
+                <div class="id-header-text">
+                  <h4>KISAN SEVA IDENTITY CARD</h4>
+                  <p>Ministry &amp; Panchayat Digital Record</p>
+                </div>
+              </div>
+              <div class="id-card-body">
+                <div class="id-avatar-circle" id="id-card-avatar">👨‍🌾</div>
+                <div class="id-info-table">
+                  <div class="id-row">
+                    <span class="id-lbl">Name:</span>
+                    <span class="id-val" id="id-card-name">Guest Farmer</span>
+                  </div>
+                  <div class="id-row">
+                    <span class="id-lbl">Mobile:</span>
+                    <span class="id-val" id="id-card-phone">--</span>
+                  </div>
+                  <div class="id-row">
+                    <span class="id-lbl">Village:</span>
+                    <span class="id-val" id="id-card-village">--</span>
+                  </div>
+                  <div class="id-row">
+                    <span class="id-lbl">District:</span>
+                    <span class="id-val" id="id-card-district">--</span>
+                  </div>
+                  <div class="id-row">
+                    <span class="id-lbl">Language:</span>
+                    <span class="id-val" id="id-card-lang">English</span>
+                  </div>
+                  <div class="id-row">
+                    <span class="id-lbl">Practice:</span>
+                    <span class="id-val" id="id-card-method">Conventional</span>
+                  </div>
+                </div>
+              </div>
+              <div class="id-card-footer">
+                <span>Offline Record Key: <code>localStorage.agri_profile</code></span>
+              </div>
+            </div>
+            <div class="privacy-note">
+              🔒 <strong>Data Privacy Guarantee:</strong> Your information never leaves your browser. No third-party servers, zero tracking cookies.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 3: FARM DETAILS & SOIL/WATER RESOURCES
+         ======================================================== -->
+    <section id="view-farm" class="app-view" role="tabpanel" aria-labelledby="tab-farm">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">🚜 Agricultural Land &amp; Soil Record</h2>
+          <p class="view-subtitle">Specify land dimensions, land survey numbers, soil chemistry, and irrigation sources.</p>
+        </div>
+      </div>
+
+      <div class="form-layout-grid">
+        <!-- Farm Info Form -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🌾 Land Holding &amp; Cultivation Parameters</h3>
+          </div>
+          <div class="card-body">
+            <form id="form-farm" novalidate>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="farm-acres" class="form-label required">Total Land Holding Area (in Acres)</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">📐</span>
+                    <input type="number" id="farm-acres" name="acres" class="form-control" placeholder="e.g., 4.5" step="0.1" min="0.1" max="1000" required>
+                  </div>
+                  <div class="field-error" id="err-farm-acres">Please specify a valid land area in acres (> 0).</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="farm-survey" class="form-label required">Survey / Pattadar Passbook No.</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">📑</span>
+                    <input type="text" id="farm-survey" name="survey" class="form-control" placeholder="e.g., SY-142/3A or PB-88421" required maxlength="40">
+                  </div>
+                  <div class="field-error" id="err-farm-survey">Please enter the revenue survey or passbook number.</div>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="farm-soil" class="form-label required">Dominant Soil Type</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🧪</span>
+                    <select id="farm-soil" name="soil" class="form-control" required>
+                      <option value="">-- Select Soil Classification --</option>
+                      <option value="Black Cotton Soil">Black Cotton Soil (Deep Vertisols, High Moisture Retention)</option>
+                      <option value="Red Loam Soil">Red Loam Soil (Well-drained, Iron-rich, Alfisols)</option>
+                      <option value="Alluvial Soil">Alluvial Soil (Fertile River Plains, High Organic Content)</option>
+                      <option value="Laterite Soil">Laterite Soil (Acidic, Heavy Leaching, Coastal/Hilly)</option>
+                      <option value="Sandy Loam">Sandy Loam (Porous, Fast Draining, Low Water Retention)</option>
+                      <option value="Clay Loam">Clay Loam (Heavy Textured, High Fertility, Moderate Drainage)</option>
+                    </select>
+                  </div>
+                  <div class="field-error" id="err-farm-soil">Select the predominant soil type of your field.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="farm-water" class="form-label required">Primary Water / Irrigation Source</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">💧</span>
+                    <select id="farm-water" name="water" class="form-control" required>
+                      <option value="">-- Select Irrigation Source --</option>
+                      <option value="Borewell / Tube Well">Borewell / Tube Well (Groundwater Extraction)</option>
+                      <option value="Canal Irrigation">Canal Irrigation (Command Area / River Project)</option>
+                      <option value="Rainfed / Dryland">Rainfed / Dryland (Monsoon Dependent)</option>
+                      <option value="Open Dug Well">Open Dug Well / Farm Pond (Surface Runoff)</option>
+                      <option value="Micro Drip / Sprinkler">Micro-Drip / Automated Sprinkler System</option>
+                      <option value="River / Stream Lift">River / Stream Lift Irrigation</option>
+                    </select>
+                  </div>
+                  <div class="field-error" id="err-farm-water">Select your main irrigation facility.</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="farm-crops" class="form-label required">Currently Sown / Planned Standing Crops</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">🌱</span>
+                  <input type="text" id="farm-crops" name="crops" class="form-control" placeholder="e.g., Paddy, Cotton, Groundnut, Chilli" required>
+                </div>
+                <span class="form-hint">Separate multiple crops with commas. Quick suggestions:</span>
+                <div class="tag-quick-select" id="crop-quick-tags">
+                  <button type="button" class="tag-chip" data-crop="Paddy">🌾 Paddy</button>
+                  <button type="button" class="tag-chip" data-crop="Cotton">☁️ Cotton</button>
+                  <button type="button" class="tag-chip" data-crop="Groundnut">🥜 Groundnut</button>
+                  <button type="button" class="tag-chip" data-crop="Maize">🌽 Maize</button>
+                  <button type="button" class="tag-chip" data-crop="Chilli">🌶️ Chilli</button>
+                  <button type="button" class="tag-chip" data-crop="Bengal Gram">🥣 Bengal Gram</button>
+                </div>
+                <div class="field-error" id="err-farm-crops">Enter at least one active or planned crop.</div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-save-farm">
+                  💾 Save Farm Details
+                </button>
+                <button type="button" class="btn btn-outline" id="btn-reset-farm">
+                  🔄 Reset Form
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Agronomic Recommendations Sidebar -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🔬 Automated Agronomic Advisory</h3>
+            <span class="badge-status">Real-time Soil Guide</span>
+          </div>
+          <div class="card-body">
+            <div id="farm-advisory-box" class="farm-advisory-content">
+              <div class="empty-state-mini">
+                <span class="empty-icon">🌱</span>
+                <p>Select your soil and water type above to see scientific agronomic suitability guidelines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 4: CROP INFORMATION CATALOG
+         ======================================================== -->
+    <section id="view-crops" class="app-view" role="tabpanel" aria-labelledby="tab-crops">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">🌱 Crop Information Catalog</h2>
+          <p class="view-subtitle">Scientific crop profiles, soil compatibility, duration, irrigation needs, and IPM management.</p>
+        </div>
+      </div>
+
+      <!-- Real-time Filter & Search Toolbar -->
+      <div class="catalog-toolbar">
+        <div class="search-input-box">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input type="text" id="crop-search-input" class="form-control" placeholder="Search crops by name, season, or disease tips..." aria-label="Search crop catalog">
+          <button type="button" id="btn-clear-crop-search" class="clear-input-btn" title="Clear search" aria-label="Clear search">✕</button>
+        </div>
+
+        <div class="filter-dropdown-box">
+          <label for="crop-soil-filter" class="filter-label">Filter by Soil:</label>
+          <select id="crop-soil-filter" class="form-control" aria-label="Filter crops by soil type">
+            <option value="ALL">All Soil Types</option>
+            <option value="Black Cotton Soil">Black Cotton Soil</option>
+            <option value="Red Loam Soil">Red Loam Soil</option>
+            <option value="Alluvial Soil">Alluvial Soil</option>
+            <option value="Sandy Loam">Sandy Loam</option>
+            <option value="Laterite Soil">Laterite Soil</option>
+          </select>
+        </div>
+
+        <div class="filter-dropdown-box">
+          <label for="crop-season-filter" class="filter-label">Season:</label>
+          <select id="crop-season-filter" class="form-control" aria-label="Filter crops by season">
+            <option value="ALL">All Seasons</option>
+            <option value="Kharif">Kharif (Monsoon)</option>
+            <option value="Rabi">Rabi (Winter)</option>
+            <option value="Zaid">Zaid (Summer)</option>
+            <option value="Annual">Annual / Perennial</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Live Match Count Counter -->
+      <div class="catalog-status-bar">
+        <span id="crop-count-badge" class="count-badge">Showing 8 of 8 crops</span>
+        <span class="catalog-hint">💡 Click "Log Activity" on any crop card to record sowing or fertilizer expenses.</span>
+      </div>
+
+      <!-- Crop Cards Grid -->
+      <div class="crop-grid" id="crop-grid-container">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 5: FARM ACTIVITY MANAGEMENT (FIELD LEDGER)
+         ======================================================== -->
+    <section id="view-ledger" class="app-view" role="tabpanel" aria-labelledby="tab-ledger">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">📒 Farm Activity Management &amp; Field Ledger</h2>
+          <p class="view-subtitle">Chronological ledger of field activities, input costs, labor expenses, and harvest revenues.</p>
+        </div>
+        <div class="view-actions">
+          <button type="button" class="btn btn-outline" id="btn-export-ledger-csv" title="Download ledger as CSV table">
+            📊 Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Summary Banner -->
+      <div class="ledger-summary-banner">
+        <div class="summary-metric">
+          <span class="summary-lbl">Total Expenses Incurred</span>
+          <span class="summary-val font-large" id="ledger-total-expense">₹0.00</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-metric">
+          <span class="summary-lbl">Total Operations Logged</span>
+          <span class="summary-val" id="ledger-total-count">0 Records</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-breakdown" id="ledger-category-chips">
+          <!-- Dynamic category expenditure pills -->
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Activity Input Form + Ledger Table -->
+      <div class="ledger-layout-grid">
+        
+        <!-- Form to Log Daily Farm Operations -->
+        <div class="card ledger-form-card">
+          <div class="card-header">
+            <h3 class="card-title">✍️ Record Daily Field Operation</h3>
+          </div>
+          <div class="card-body">
+            <form id="form-activity" novalidate>
+              <div class="form-group">
+                <label for="act-date" class="form-label required">Activity Date</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">📅</span>
+                  <input type="date" id="act-date" name="date" class="form-control" required>
+                </div>
+                <div class="field-error" id="err-act-date">Please select a valid date.</div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="act-category" class="form-label required">Operation Category</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🏷️</span>
+                    <select id="act-category" name="category" class="form-control" required>
+                      <option value="">-- Select Category --</option>
+                      <option value="Sowing / Planting">🌱 Sowing / Transplanting</option>
+                      <option value="Irrigation">💧 Irrigation / Watering</option>
+                      <option value="Fertilizer Application">🧪 Fertilizer / Manure Application</option>
+                      <option value="Pesticide Spray">🛡️ Pesticide / Bio-spray</option>
+                      <option value="Weeding & Tillage">🌾 Weeding &amp; Inter-cultivation</option>
+                      <option value="Harvesting & Threshing">🚜 Harvesting &amp; Threshing</option>
+                      <option value="Post-Harvest & Transport">🚚 Post-Harvest &amp; Transport</option>
+                    </select>
+                  </div>
+                  <div class="field-error" id="err-act-category">Please select an operation category.</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="act-crop" class="form-label required">Associated Crop</label>
+                  <div class="input-wrapper">
+                    <span class="input-icon">🌾</span>
+                    <input type="text" id="act-crop" name="crop" class="form-control" list="crop-datalist" placeholder="e.g., Paddy, Cotton" required>
+                    <datalist id="crop-datalist">
+                      <option value="Paddy">
+                      <option value="Cotton">
+                      <option value="Groundnut">
+                      <option value="Maize">
+                      <option value="Chilli">
+                      <option value="Bengal Gram">
+                    </datalist>
+                  </div>
+                  <div class="field-error" id="err-act-crop">Specify which crop this applies to.</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="act-cost" class="form-label required">Cost Incurred (₹ INR)</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">₹</span>
+                  <input type="number" id="act-cost" name="cost" class="form-control" placeholder="0" min="0" step="1" required>
+                </div>
+                <span class="form-hint">Enter 0 if no financial cost was incurred (e.g. self-labor).</span>
+                <div class="field-error" id="err-act-cost">Enter a valid non-negative cost (>= 0).</div>
+              </div>
+
+              <div class="form-group">
+                <label for="act-notes" class="form-label">Field Notes / Materials &amp; Labor Details</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">📝</span>
+                  <input type="text" id="act-notes" name="notes" class="form-control" placeholder="e.g., Applied 50kg Urea & 25kg DAP, 2 laborers engaged">
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-save-activity">
+                  ➕ Log Field Activity
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Ledger Table & Filtering -->
+        <div class="card ledger-table-card">
+          <div class="card-header">
+            <h3 class="card-title">📋 Chronological Activity Ledger</h3>
+            <div class="table-filter-group">
+              <select id="ledger-filter-category" class="form-control form-control-sm" aria-label="Filter ledger by category">
+                <option value="ALL">All Categories</option>
+                <option value="Sowing / Planting">Sowing</option>
+                <option value="Irrigation">Irrigation</option>
+                <option value="Fertilizer Application">Fertilizer</option>
+                <option value="Pesticide Spray">Pesticide</option>
+                <option value="Weeding & Tillage">Weeding</option>
+                <option value="Harvesting & Threshing">Harvesting</option>
+                <option value="Post-Harvest & Transport">Post-Harvest</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="data-table" id="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Crop</th>
+                    <th>Field Notes</th>
+                    <th class="text-right">Cost (₹)</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="ledger-table-body">
+                  <!-- Populated via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div id="ledger-empty-state" class="empty-state" style="display: none;">
+              <span class="empty-icon">📒</span>
+              <h4>No Activities Logged Yet</h4>
+              <p>Use the form on the left to record your daily farming tasks, labor wages, seed costs, and fertilizer applications.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 6: AGRICULTURE ADVISORY & GOVT SCHEMES
+         ======================================================== -->
+    <section id="view-advisory" class="app-view" role="tabpanel" aria-labelledby="tab-advisory">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">🏛️ Agriculture Information &amp; Government Schemes</h2>
+          <p class="view-subtitle">Official state and central welfare portals, daily APMC mandi rates, field weather forecast, and scientific IPM protocols.</p>
+        </div>
+      </div>
+
+      <!-- Agriculture Information Hub: Weather & Mandi Market Prices (Prototype Diagram Module 7) -->
+      <div class="dashboard-columns" style="margin-bottom: 24px;">
+        
+        <!-- Live Agricultural Weather Updates -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🌤️ Weather Updates &amp; Spray Advisory</h3>
+            <span class="badge-status-blue">Field Forecast</span>
+          </div>
+          <div class="card-body">
+            <div class="weather-widget-box">
+              <div class="weather-temp-row">
+                <span class="weather-large-icon">⛅</span>
+                <div>
+                  <span class="weather-temp">29°C</span>
+                  <span class="weather-condition">Partly Cloudy • Gentle Breeze</span>
+                </div>
+              </div>
+              <ul class="detail-list" style="margin-top: 12px;">
+                <li>
+                  <span class="detail-label">💧 Relative Humidity:</span>
+                  <span class="detail-value">64%</span>
+                </li>
+                <li>
+                  <span class="detail-label">🌧️ Precipitation Chance:</span>
+                  <span class="detail-value">15% (No heavy rain expected today)</span>
+                </li>
+                <li>
+                  <span class="detail-label">💨 Wind Speed:</span>
+                  <span class="detail-value">11 km/h (East-North-East)</span>
+                </li>
+              </ul>
+              <div class="advisory-pill-box" style="margin-top: 12px; background-color: #ecfdf5; border-color: #a7f3d0;">
+                <span class="pill-icon">🚜</span>
+                <p class="pill-text"><strong>Field Advisory:</strong> Favorable conditions for foliar spray and weeding between 7:00 AM - 10:30 AM before wind speed picks up.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Mandi Market Commodity Prices -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">📈 Mandi Market Benchmark Prices (APMC)</h3>
+            <span class="badge-status-green">e-NAM Daily Rates</span>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" style="font-size: 0.875rem;">
+                <thead>
+                  <tr>
+                    <th>Commodity</th>
+                    <th>Variety</th>
+                    <th class="text-right">Modal Price (₹/Qtl)</th>
+                    <th class="text-center">Trend</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>🌾 Paddy (Dhan)</strong></td>
+                    <td>Common Grade-A</td>
+                    <td class="text-right cost-cell">₹2,203</td>
+                    <td class="text-center" style="color: #16a34a; font-weight: 700;">▲ +₹25</td>
+                  </tr>
+                  <tr>
+                    <td><strong>☁️ Cotton (Kapas)</strong></td>
+                    <td>Medium Staple</td>
+                    <td class="text-right cost-cell">₹7,120</td>
+                    <td class="text-center" style="color: #16a34a; font-weight: 700;">▲ +₹80</td>
+                  </tr>
+                  <tr>
+                    <td><strong>🥜 Groundnut</strong></td>
+                    <td>Pod (Bold)</td>
+                    <td class="text-right cost-cell">₹6,375</td>
+                    <td class="text-center" style="color: #d97706; font-weight: 700;">● Steady</td>
+                  </tr>
+                  <tr>
+                    <td><strong>🌽 Maize (Corn)</strong></td>
+                    <td>Hybrid Yellow</td>
+                    <td class="text-right cost-cell">₹2,090</td>
+                    <td class="text-center" style="color: #16a34a; font-weight: 700;">▲ +₹15</td>
+                  </tr>
+                  <tr>
+                    <td><strong>🌶️ Chilli (Red)</strong></td>
+                    <td>Teja / Guntur Dry</td>
+                    <td class="text-right cost-cell">₹19,500</td>
+                    <td class="text-center" style="color: #dc2626; font-weight: 700;">▼ -₹120</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Government Welfare Schemes Sub-Heading -->
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-primary-dark); margin-bottom: 16px;">
+        🏛️ Central &amp; State Welfare Schemes
+      </h3>
+
+      <!-- Scheme Cards Grid -->
+      <div class="schemes-grid">
+        
+        <!-- Scheme 1: PM-KISAN -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-central">Central Sector</div>
+            <span class="scheme-icon">💰</span>
+          </div>
+          <h3 class="scheme-name">PM-Kisan Samman Nidhi</h3>
+          <p class="scheme-desc">
+            Direct income support of <strong>₹6,000 per year</strong> in three equal instalments of ₹2,000 directly transferred into the Aadhaar-linked bank accounts of landholder farmer families.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Eligibility:</span>
+              <span class="stat-desc">All landholding farmer families with cultivable land.</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Required Docs:</span>
+              <span class="stat-desc">Aadhaar Card, Land Revenue Records, Bank Passbook.</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://pmkisan.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Visit Official PM-Kisan Portal
+            </a>
+          </div>
+        </div>
+
+        <!-- Scheme 2: PMFBY -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-insurance">Crop Insurance</div>
+            <span class="scheme-icon">🛡️</span>
+          </div>
+          <h3 class="scheme-name">Pradhan Mantri Fasal Bima Yojana (PMFBY)</h3>
+          <p class="scheme-desc">
+            Comprehensive crop insurance covering non-preventable natural risks (drought, flood, unseasonal rains, pest epidemics). Uniform low premium: <strong>2% for Kharif, 1.5% for Rabi, 5% for Horticulture</strong>.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Claim Window:</span>
+              <span class="stat-desc">Notify crop damage within 72 hours via Crop Insurance App.</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Coverage:</span>
+              <span class="stat-desc">Pre-sowing to post-harvest localized calamities.</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://pmfby.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Visit Official PMFBY Portal
+            </a>
+          </div>
+        </div>
+
+        <!-- Scheme 3: Soil Health Card -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-science">Soil Health</div>
+            <span class="scheme-icon">🧪</span>
+          </div>
+          <h3 class="scheme-name">Soil Health Card Scheme (SHC)</h3>
+          <p class="scheme-desc">
+            Provides crop-wise nutrient recommendations for 12 essential soil parameters (N, P, K, S, Zn, Fe, Cu, Mn, Bo, pH, EC, OC), preventing indiscriminate fertilizer misuse and reducing cultivation overhead.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Cycle:</span>
+              <span class="stat-desc">Issued every 2 years through District Soil Testing Labs.</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Benefit:</span>
+              <span class="stat-desc">8-10% average savings on chemical fertilizers.</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://soilhealth.dac.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Visit Soil Health Portal
+            </a>
+          </div>
+        </div>
+
+        <!-- Scheme 4: Kisan Credit Card -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-credit">Institutional Credit</div>
+            <span class="scheme-icon">💳</span>
+          </div>
+          <h3 class="scheme-name">Kisan Credit Card (KCC) Scheme</h3>
+          <p class="scheme-desc">
+            Timely credit up to <strong>₹3,00,000</strong> at a subsidized base interest rate of 7%, dropping down to an effective <strong>4% interest rate</strong> with timely loan repayment incentives.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Validity:</span>
+              <span class="stat-desc">5-year revolving credit limit with ATM-enabled RuPay card.</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Collateral Free:</span>
+              <span class="stat-desc">No collateral required for agricultural loans up to ₹1.60 Lakh.</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://www.myscheme.gov.in/schemes/kcc" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Learn More on MyScheme
+            </a>
+          </div>
+        </div>
+
+        <!-- Scheme 5: PM Krishi Sinchayee Yojana -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-water">Irrigation Subsidy</div>
+            <span class="scheme-icon">💧</span>
+          </div>
+          <h3 class="scheme-name">Per Drop More Crop (PMKSY)</h3>
+          <p class="scheme-desc">
+            Micro-irrigation subsidy offering up to <strong>55% subsidy for small/marginal farmers</strong> and 45% for other farmers on modern Drip and Sprinkler installations, saving up to 40% water.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Focus:</span>
+              <span class="stat-desc">Water conservation, fertigation, and higher farm yield.</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Sanction Authority:</span>
+              <span class="stat-desc">District Horticulture / Agriculture Officer.</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://pmksy.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Visit Official PMKSY Portal
+            </a>
+          </div>
+        </div>
+
+        <!-- Scheme 6: IPM Best Practices -->
+        <div class="scheme-card">
+          <div class="scheme-header">
+            <div class="scheme-badge badge-ipm">Scientific Advisory</div>
+            <span class="scheme-icon">🐛</span>
+          </div>
+          <h3 class="scheme-name">Integrated Pest Management (IPM)</h3>
+          <p class="scheme-desc">
+            Ecologically sound pest suppression: combine biological controls (Trichogramma, Neem oil 1500ppm), pheromone traps (5/acre for bollworms), yellow sticky cards, and resort to synthetic sprays only above ETL.
+          </p>
+          <div class="scheme-details">
+            <div class="scheme-stat">
+              <span class="stat-title">Core Principle:</span>
+              <span class="stat-desc">Protect beneficial predators (spiders, ladybird beetles).</span>
+            </div>
+            <div class="scheme-stat">
+              <span class="stat-title">Helpline:</span>
+              <span class="stat-desc">National Institute of Plant Health Management (NIPHM).</span>
+            </div>
+          </div>
+          <div class="scheme-footer">
+            <a href="https://niphm.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+              🌐 Visit NIPHM Advisory
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 7: DESIGN THINKING & PROJECT BLUEPRINTS
+         ======================================================== -->
+    <section id="view-diagrams" class="app-view" role="tabpanel" aria-labelledby="tab-diagrams">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">📐 Design Thinking, System Architecture &amp; Customer Journey</h2>
+          <p class="view-subtitle">Official prototype diagrams, empathy-driven farmer customer journey maps, and project mindmaps.</p>
+        </div>
+        <div class="view-actions">
+          <button type="button" class="btn btn-outline" id="btn-print-diagrams" onclick="window.print()">
+            🖨️ Print Blueprints
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Context Callout -->
+      <div class="welcome-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); border-color: #93c5fd;">
+        <div class="welcome-icon">🎨</div>
+        <div class="welcome-text">
+          <h3 style="color: #0369a1;">Academic Innovation &amp; Visual Blueprints</h3>
+          <p style="color: #1e3a8a;">Developed under the mentorship of <strong>Dr. K. Dinesh</strong> by <strong>G. Hari Charan (2500040163)</strong> &amp; <strong>H. Venu Gopal Krishna (2500040237)</strong>. Click on any diagram to open the high-resolution fullscreen zoom view.</p>
+        </div>
+      </div>
+
+      <!-- Featured Diagrams Showcase Grid -->
+      <div class="diagrams-grid">
+        
+        <!-- Diagram 1: Prototype Design Diagram -->
+        <div class="card diagram-card">
+          <div class="card-header">
+            <div>
+              <span class="badge-status-blue">1. System Workflow</span>
+              <h3 class="card-title">Prototype Design Diagram</h3>
+            </div>
+            <span class="diagram-tag">8 Core Screens</span>
+          </div>
+          <div class="diagram-image-container" onclick="kisanOpenDiagram('assets/prototype_design_diagram.jpg', 'Prototype Design Diagram (Farmer-Friendly Agriculture Web App) - End-to-End System Flow')">
+            <img src="assets/prototype_design_diagram.jpg" alt="Prototype Design Diagram showing Registration, Login, Farmer Dashboard, Farm Details, Crop Info, Farm Activities, Agri Info, and End Result" class="diagram-img" loading="lazy">
+            <div class="diagram-hover-hint">
+              <span class="hint-icon">🔍</span>
+              <span>Click to Zoom &amp; Inspect High-Res</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h4 class="diagram-section-title">Illustrated Architecture &amp; Module Flow:</h4>
+            <div class="diagram-steps-grid">
+              <div class="step-pill">1. Farmer Registration</div>
+              <div class="step-pill">2. Login Authentication</div>
+              <div class="step-pill">3. Central Dashboard</div>
+              <div class="step-pill">4. Farm Details &amp; Soil</div>
+              <div class="step-pill">5. Crop Information</div>
+              <div class="step-pill">6. Farm Activities Ledger</div>
+              <div class="step-pill">7. Agriculture Info</div>
+              <div class="step-pill">8. Responsive Output</div>
+            </div>
+            <p class="diagram-desc-text">
+              <strong>Module Flow:</strong> Registration &rarr; Dashboard &rarr; Farm Details &rarr; Crop Information &rarr; Farm Activities &rarr; Agriculture Information.
+            </p>
+            <div class="diagram-actions-row">
+              <button type="button" class="btn btn-primary btn-sm" onclick="kisanOpenDiagram('assets/prototype_design_diagram.jpg', 'Prototype Design Diagram (Farmer-Friendly Agriculture Web App)')">
+                🔍 Fullscreen Zoom
+              </button>
+              <a href="assets/prototype_design_diagram.jpg" download="Prototype_Design_Diagram.jpg" class="btn btn-outline btn-sm">
+                💾 Download Original JPG
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagram 2: Customer Journey Diagram -->
+        <div class="card diagram-card">
+          <div class="card-header">
+            <div>
+              <span class="badge-status-green">2. Design Thinking &amp; Empathy</span>
+              <h3 class="card-title">Customer Journey Diagram</h3>
+            </div>
+            <span class="diagram-tag">9 User Stages</span>
+          </div>
+          <div class="diagram-image-container" onclick="kisanOpenDiagram('assets/customer_journey_diagram.jpg', 'Customer Journey Diagram: From Registration to Better Farming - 9 Stages with Emotional Mapping')">
+            <img src="assets/customer_journey_diagram.jpg" alt="Customer Journey Diagram illustrating the 9-stage progression of a farmer from awareness to better farming and growth" class="diagram-img" loading="lazy">
+            <div class="diagram-hover-hint">
+              <span class="hint-icon">🔍</span>
+              <span>Click to Zoom &amp; Inspect High-Res</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h4 class="diagram-section-title">Farmer Digital Lifecycle &amp; Emotional Mapping:</h4>
+            <div class="journey-phases-list">
+              <div class="journey-phase-item">
+                <span class="phase-badge phase-before">Before Using</span>
+                <span><strong>1. Awareness:</strong> Discovers app via friends/panchayat. <em>(Curious &amp; Interested)</em></span>
+              </div>
+              <div class="journey-phase-item">
+                <span class="phase-badge phase-start">Getting Started</span>
+                <span><strong>2. Registration &amp; 3. Login:</strong> Creates secure offline profile. <em>(Confident &amp; Ready)</em></span>
+              </div>
+              <div class="journey-phase-item">
+                <span class="phase-badge phase-use">Using the App</span>
+                <span><strong>4-8. Details, Crops, Ledger &amp; Reports:</strong> Manages farm resources &amp; costs. <em>(Informed &amp; In Control)</em></span>
+              </div>
+              <div class="journey-phase-item">
+                <span class="phase-badge phase-goal">Achieving Goals</span>
+                <span><strong>9. Better Farming &amp; Growth:</strong> Improves income, reduces input costs. <em>(Happy &amp; Empowered)</em></span>
+              </div>
+            </div>
+            <div class="diagram-actions-row">
+              <button type="button" class="btn btn-primary btn-sm" onclick="kisanOpenDiagram('assets/customer_journey_diagram.jpg', 'Customer Journey Diagram - From Registration to Better Farming')">
+                🔍 Fullscreen Zoom
+              </button>
+              <a href="assets/customer_journey_diagram.jpg" download="Customer_Journey_Diagram.jpg" class="btn btn-outline btn-sm">
+                💾 Download Original JPG
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagram 3: Project Mindmap & Architecture -->
+        <div class="card diagram-card">
+          <div class="card-header">
+            <div>
+              <span class="badge-status-amber">3. Academic Specification</span>
+              <h3 class="card-title">Farmer-Friendly Agriculture Web App Mindmap</h3>
+            </div>
+            <span class="diagram-tag">Project Blueprint</span>
+          </div>
+          <div class="diagram-image-container" onclick="kisanOpenDiagram('assets/project_mindmap_diagram.jpg', 'Farmer-Friendly Agriculture Web App Mindmap: Complete Academic Blueprint')">
+            <img src="assets/project_mindmap_diagram.jpg" alt="Farmer-Friendly Agriculture Web App Mindmap detailing Problem Statement, Team Members, Faculty Mentor Dr. K. Dinesh, Tech Stack, and Scope" class="diagram-img" loading="lazy">
+            <div class="diagram-hover-hint">
+              <span class="hint-icon">🔍</span>
+              <span>Click to Zoom &amp; Inspect High-Res</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h4 class="diagram-section-title">Core Project Attributes (Mindmap Nodes):</h4>
+            <ul class="detail-list" style="margin-bottom: 16px;">
+              <li>
+                <span class="detail-label">🎓 Faculty Mentor:</span>
+                <span class="detail-value font-bold">DR. K. DINESH</span>
+              </li>
+              <li>
+                <span class="detail-label">👥 Team Members:</span>
+                <span class="detail-value">G. Hari Charan (Lead - 2500040163) &amp; H. Venu Gopal Krishna (2500040237)</span>
+              </li>
+              <li>
+                <span class="detail-label">🎯 Problem Statement:</span>
+                <span class="detail-value">Agriculture Digital Support for Farmers</span>
+              </li>
+              <li>
+                <span class="detail-label">🛠️ Technology Stack:</span>
+                <span class="detail-value">HTML5, CSS3, JavaScript, VS Code, Web Browser</span>
+              </li>
+              <li>
+                <span class="detail-label">💡 Design Thinking Tools:</span>
+                <span class="detail-value">Mindmap, Customer Journey, Survey/Poll, Prototype Design</span>
+              </li>
+              <li>
+                <span class="detail-label">👥 Scope &amp; Beneficiaries:</span>
+                <span class="detail-value">Farmers, Smallholders, Nursery Owners, Laborers, Students</span>
+              </li>
+            </ul>
+            <div class="diagram-actions-row">
+              <button type="button" class="btn btn-primary btn-sm" onclick="kisanOpenDiagram('assets/project_mindmap_diagram.jpg', 'Farmer-Friendly Agriculture Web App Mindmap')">
+                🔍 Fullscreen Zoom
+              </button>
+              <a href="assets/project_mindmap_diagram.jpg" download="Project_Mindmap_Diagram.jpg" class="btn btn-outline btn-sm">
+                💾 Download Original JPG
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Project Info & Academic Attribution Modal -->
+  <div class="modal-overlay" id="academic-modal" role="dialog" aria-modal="true" aria-labelledby="modal-academic-title" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-academic-title">🎓 Academic Project Details</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-modal" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="academic-badge-banner">
+          <div class="uni-icon">🏛️</div>
+          <div>
+            <h4>Agriculture Digital Support for Farmers</h4>
+            <p>Undergraduate Engineering Capstone / Domain Application</p>
+          </div>
+        </div>
+
+        <div class="academic-grid">
+          <div class="academic-role-box">
+            <span class="role-lbl">Faculty Mentor</span>
+            <strong class="role-name">Dr. K. Dinesh</strong>
+            <span class="role-desc">Academic &amp; Research Supervisor</span>
+          </div>
+          <div class="academic-role-box">
+            <span class="role-lbl">Team Lead</span>
+            <strong class="role-name">G. Hari Charan</strong>
+            <span class="role-id">ID: 2500040163</span>
+          </div>
+          <div class="academic-role-box">
+            <span class="role-lbl">Team Member</span>
+            <strong class="role-name">H. Venu Gopal Krishna</strong>
+            <span class="role-id">ID: 2500040237</span>
+          </div>
+        </div>
+
+        <hr class="modal-divider">
+
+        <h4>Technical Specifications</h4>
+        <ul class="tech-specs-list">
+          <li><strong>Architecture:</strong> Single-Page Application (SPA) with zero external frameworks or backend calls.</li>
+          <li><strong>Persistence:</strong> Client-side HTML5 Web Storage API (<code>localStorage</code>), zero data egress.</li>
+          <li><strong>Form Validation:</strong> Native HTML5 Constraint API combined with JavaScript ES6 RegExp patterns.</li>
+          <li><strong>Internationalization / Currency:</strong> <code>Intl.NumberFormat('en-IN')</code> for standard Indian Rupee notation.</li>
+          <li><strong>Usability Standard:</strong> Mobile-first fluid responsive grid, WCAG AAA sunlight-legible contrast.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="btn-modal-ok">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- High-Resolution Image Lightbox Modal -->
+  <div class="lightbox-modal" id="lightbox-modal" role="dialog" aria-modal="true" aria-label="Expanded Diagram Viewer" style="display: none;">
+    <div class="lightbox-content">
+      <div class="lightbox-header">
+        <span class="lightbox-caption" id="lightbox-caption">Expanded Diagram Viewer</span>
+        <div class="lightbox-controls">
+          <a href="#" id="lightbox-download-link" download class="btn btn-xs btn-outline lightbox-dl-btn">
+            💾 Download JPG
+          </a>
+          <button type="button" class="lightbox-close-btn" id="btn-close-lightbox" aria-label="Close image viewer">✕</button>
+        </div>
+      </div>
+      <div class="lightbox-img-wrapper" id="lightbox-img-wrapper">
+        <img id="lightbox-img" src="" alt="Expanded diagram preview">
+      </div>
+      <div class="lightbox-footer">
+        <span>💡 Use mouse wheel or pinch to zoom. Press <kbd>ESC</kbd> or click ✕ to close.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="footer-logo">🌾</span>
+        <strong>KisanSeva Portal</strong> — Free, Offline-First Farm Operations Ledger
+      </div>
+      <div class="footer-credit">
+        Project Mentor: <strong>Dr. K. Dinesh</strong> | Team: <strong>G. Hari Charan (2500040163)</strong> &amp; <strong>H. Venu Gopal Krishna (2500040237)</strong>
+      </div>
+      <div class="footer-copy">
+        All state stored securely in your browser's LocalStorage. No server telemetry or tracking.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
